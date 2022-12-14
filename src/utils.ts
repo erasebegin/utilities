@@ -1,27 +1,54 @@
-export function parseCSSString(cssText: string): string {
-  const cssTxt = cssText.replace(/\/\*(.|\s)*?\*\//g, " ").replace(/\s+/g, " ");
-  const style: { [index: string]: string } = {},
-    [, ruleName, rule] = cssTxt.match(/ ?(.*?) ?{([^}]*)}/) || [, , cssTxt];
-  const cssToJs = (s: string): string =>
-    s.replace(/\W+\w/g, (match: string) => match.slice(-1).toUpperCase());
-  const properties = rule
-    .split(";")
-    .map((o) => o.split(":").map((x) => x && x.trim()));
-  for (const [property, value] of properties) style[cssToJs(property)] = value;
-  console.log({ style });
-  return objectToString(style);
-}
-
-export function objectToString(object: { [index: string]: string }): string {
-  let str = "";
-  for (let i in object) {
-    str += "    " + i + ": " + object[i] + ", \n";
-  }
-  str = str.substring(0, str.length - 2);
-
-  if (str.length > 1) {
-    return "{\n" + str + "\n}";
+export function parseCSSString(
+  str: string,
+  sortAlphabetical: boolean = true
+): string {
+  let cssArr = [];
+  if (sortAlphabetical) {
+    cssArr = str
+      .trim()
+      .split(";")
+      .slice(0, -1)
+      .sort((a: any, b: any) => {
+        if (a < b) {
+          return -1;
+        }
+        if (a > b) {
+          return 1;
+        }
+        return 0;
+      });
+  } else {
+    cssArr = str.trim().split(";").slice(0, -1);
   }
 
-  return "{ }";
+  const cssArrSplit = cssArr.map((cssLine: string) => cssLine.split(":"));
+
+  const formatSides = cssArrSplit.map((cssLineArr: string[]) => {
+    const leftSide = cssLineArr[0]
+    // remove empty space (new lines and spaces), 
+      .replace(/\s/g, "")
+    // then change kebab-case to camelCase
+      .replace(/-([a-z])/g, (match, char) => char.toUpperCase());
+
+    const rightSide = `"${cssLineArr[1].trim()}"`;
+
+    return [leftSide, rightSide];
+  });
+  const joinSides = formatSides.map((cssLineArr: string[]) => {
+    return `${cssLineArr[0]}: ${cssLineArr[1]}`;
+  });
+
+  let outputString = "{"
+
+  joinSides.forEach((line: string, index)=>{
+    outputString += `\n    ${line}`
+
+    if(index === joinSides.length - 1){
+      outputString += `\n    ${line}\n}`
+    }
+  })
+
+  console.log({ str, cssArr, cssArrSplit, formatSides, joinSides, outputString });
+
+  return outputString;
 }
