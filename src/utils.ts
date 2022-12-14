@@ -1,18 +1,18 @@
 export function parseCSSString(cssText: string): string {
   const cssTxt = cssText.replace(/\/\*(.|\s)*?\*\//g, " ").replace(/\s+/g, " ");
-  const style = {},
+  const style: { [index: string]: string } = {},
     [, ruleName, rule] = cssTxt.match(/ ?(.*?) ?{([^}]*)}/) || [, , cssTxt];
-  const cssToJs = (s: string) =>
+  const cssToJs = (s: string): string =>
     s.replace(/\W+\w/g, (match: string) => match.slice(-1).toUpperCase());
   const properties = rule
     .split(";")
     .map((o) => o.split(":").map((x) => x && x.trim()));
   for (const [property, value] of properties) style[cssToJs(property)] = value;
-  console.log({style})
+  console.log({ style });
   return objectToString(style);
 }
 
-export function objectToString(object: {}): string {
+export function objectToString(object: { [index: string]: string }): string {
   let str = "";
   for (let i in object) {
     str += "    " + i + ": " + object[i] + ", \n";
