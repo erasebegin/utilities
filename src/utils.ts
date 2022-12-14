@@ -30,7 +30,8 @@ export function parseCSSString(
     // then change kebab-case to camelCase
       .replace(/-([a-z])/g, (match, char) => char.toUpperCase());
 
-    const rightSide = `"${cssLineArr[1].trim()}"`;
+    // regex is to fine all white-space characters and replace them with a single space
+    const rightSide = `"${cssLineArr[1].trim().replace(/\s+/g, " ")}"`;
 
     return [leftSide, rightSide];
   });
@@ -43,7 +44,7 @@ export function parseCSSString(
   joinSides.forEach((line: string, index)=>{
     outputString += `\n    ${line},`
 
-    if(index === joinSides.length - 1){
+    if(index === joinSides.length){
       outputString += `\n    ${line}\n}`
     }
   })
