@@ -41,7 +41,7 @@ export function parseCSSString(
   let outputString = "{"
 
   joinSides.forEach((line: string, index)=>{
-    outputString += `\n    ${line}`
+    outputString += `\n    ${line},`
 
     if(index === joinSides.length - 1){
       outputString += `\n    ${line}\n}`
