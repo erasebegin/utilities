@@ -25,9 +25,9 @@ export function parseCSSString(
 
   const formatSides = cssArrSplit.map((cssLineArr: string[]) => {
     const leftSide = cssLineArr[0]
-    // remove empty space (new lines and spaces), 
+      // remove empty space (new lines and spaces),
       .replace(/\s/g, "")
-    // then change kebab-case to camelCase
+      // then change kebab-case to camelCase
       .replace(/-([a-z])/g, (match, char) => char.toUpperCase());
 
     // regex is to fine all white-space characters and replace them with a single space
@@ -39,17 +39,26 @@ export function parseCSSString(
     return `${cssLineArr[0]}: ${cssLineArr[1]}`;
   });
 
-  let outputString = "{"
+  let outputString = "{";
 
-  joinSides.forEach((line: string, index)=>{
-    outputString += `\n    ${line},`
-
-    if(index === joinSides.length){
-      outputString += `\n    ${line}\n}`
+  joinSides.forEach((line: string, index) => {
+    if (index < joinSides.length - 1) {
+      outputString += `\n    ${line},`;
     }
-  })
 
-  console.log({ str, cssArr, cssArrSplit, formatSides, joinSides, outputString });
+    if (index === joinSides.length - 1) {
+      outputString += `\n    ${line}\n}`;
+    }
+  });
+
+  console.log({
+    str,
+    cssArr,
+    cssArrSplit,
+    formatSides,
+    joinSides,
+    outputString,
+  });
 
   return outputString;
 }
