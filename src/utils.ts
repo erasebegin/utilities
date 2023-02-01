@@ -62,3 +62,39 @@ export function parseCSSString(
 
   return outputString;
 }
+
+export function convertSvgToComponent(
+  svgString: string,
+  componentName: string
+) {
+  const svgXml = new DOMParser().parseFromString(svgString, "text/xml");
+  const svgPath = svgXml.getElementsByTagName("path")[0];
+
+  return `
+  import React from 'react';
+  import { Icon } from '@chakra-ui/react';
+
+  const ${componentName} = (props) => (
+    <Icon viewBox={'0 0 48 48'} {...props}>
+      <svg xmlns='http://www.w3.org/2000/svg' height={props.height} width={props.width}>
+        <path
+          fill={props.color}
+          d='${svgPath.getAttribute("d")}'
+        />
+      </svg>
+    </Icon>
+  );
+
+  export default ${componentName};
+  `;
+}
+
+export function convertToCamel(str: string) {
+  let result = str.replace(
+    /[^a-zA-Z0-9]+(.)/g,
+    function (match: string, char: string) {
+      return char.toUpperCase();
+    }
+  );
+  return result;
+}
