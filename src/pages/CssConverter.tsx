@@ -7,7 +7,7 @@ import {
   Text,
   Textarea,
 } from "@chakra-ui/react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { parseCSSString } from "../utils";
 import styled from "@emotion/styled";
 import { docco } from "react-syntax-highlighter/dist/esm/styles/hljs";
@@ -18,7 +18,13 @@ const CssConverter: React.FC = () => {
   const [cssString, setCssString] = useState<string>("");
   const [jsString, setJsString] = useState<string>("");
   const [sortAlphabetical, setSortAlphabetical] = useState<any>(false);
-  
+
+  useEffect(() => {
+    if (!cssString) return;
+
+    setJsString(parseCSSString(cssString, sortAlphabetical));
+  }, [cssString, sortAlphabetical]);
+
   return (
     <Layout>
       <Flex align="center" justify="center" w="full" h="90vh">
@@ -31,7 +37,6 @@ const CssConverter: React.FC = () => {
                 value={cssString}
                 onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => {
                   setCssString(e.target.value);
-                  setJsString(parseCSSString(e.target.value, sortAlphabetical));
                 }}
               />
             </FormControl>

@@ -1,66 +1,26 @@
 export function parseCSSString(
-  str: string,
-  sortAlphabetical: boolean = true
+  css: string,
+  sortAlphabetically = false
 ): string {
-  let cssArr = [];
-  if (sortAlphabetical) {
-    cssArr = str
-      .trim()
-      .split(";")
-      .slice(0, -1)
-      .sort((a: any, b: any) => {
-        if (a < b) {
-          return -1;
-        }
-        if (a > b) {
-          return 1;
-        }
-        return 0;
+  const cssArray = css.split(";").filter((x) => x);
+  const cssObject: { [key: string]: string } = {};
+
+  cssArray.forEach((pair) => {
+    const [key, value] = pair.split(":").map((x) => x.trim());
+    cssObject[key] = value;
+  });
+
+  if (sortAlphabetically) {
+    const sortedObject: { [key: string]: string } = {};
+    Object.keys(cssObject)
+      .sort()
+      .forEach(function (key) {
+        sortedObject[key] = cssObject[key];
       });
-  } else {
-    cssArr = str.trim().split(";").slice(0, -1);
+    return JSON.stringify(sortedObject, null, 2);
   }
 
-  const cssArrSplit = cssArr.map((cssLine: string) => cssLine.split(":"));
-
-  const formatSides = cssArrSplit.map((cssLineArr: string[]) => {
-    const leftSide = cssLineArr[0]
-      // remove empty space (new lines and spaces),
-      .replace(/\s/g, "")
-      // then change kebab-case to camelCase
-      .replace(/-([a-z])/g, (match, char) => char.toUpperCase());
-
-    // regex is to fine all white-space characters and replace them with a single space
-    const rightSide = `"${cssLineArr[1].trim().replace(/\s+/g, " ")}"`;
-
-    return [leftSide, rightSide];
-  });
-  const joinSides = formatSides.map((cssLineArr: string[]) => {
-    return `${cssLineArr[0]}: ${cssLineArr[1]}`;
-  });
-
-  let outputString = "{";
-
-  joinSides.forEach((line: string, index) => {
-    if (index < joinSides.length - 1) {
-      outputString += `\n    ${line},`;
-    }
-
-    if (index === joinSides.length - 1) {
-      outputString += `\n    ${line}\n}`;
-    }
-  });
-
-  console.log({
-    str,
-    cssArr,
-    cssArrSplit,
-    formatSides,
-    joinSides,
-    outputString,
-  });
-
-  return outputString;
+  return JSON.stringify(cssObject, null, 2);
 }
 
 export function convertSvgToComponent(
@@ -69,6 +29,8 @@ export function convertSvgToComponent(
 ) {
   const svgXml = new DOMParser().parseFromString(svgString, "text/xml");
   const svgPath = svgXml.getElementsByTagName("path")[0];
+
+  if (!svgPath) return;
 
   return `
   import React from 'react';
@@ -97,4 +59,13 @@ export function convertToCamel(str: string) {
     }
   );
   return result;
+}
+
+export function convertToPascal(str: string) {
+  return str
+    .split(" ")
+    .map(function (word: string) {
+      return word.charAt(0).toUpperCase() + word.slice(1);
+    })
+    .join("");
 }
