@@ -38,12 +38,10 @@ export function convertSvgToComponent(
 
   const ${componentName} = (props) => (
     <Icon viewBox={'0 0 48 48'} {...props}>
-      <svg xmlns='http://www.w3.org/2000/svg' height={props.height} width={props.width}>
         <path
           fill={props.color}
           d='${svgPath.getAttribute("d")}'
         />
-      </svg>
     </Icon>
   );
 
