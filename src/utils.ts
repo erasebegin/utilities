@@ -37,7 +37,7 @@ export function convertSvgToComponent(
   import React from 'react';
   import { Icon } from '@chakra-ui/react';
 
-  const ${componentName} = (props) => (
+  const ${componentName} = (props: any) => (
     <Icon viewBox={'${svgContainer.getAttribute("viewBox")}'} {...props}>
         <title>${componentName}</title>
         <path
