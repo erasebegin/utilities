@@ -29,6 +29,7 @@ export function convertSvgToComponent(
 ) {
   const svgXml = new DOMParser().parseFromString(svgString, "text/xml");
   const svgPath = svgXml.getElementsByTagName("path")[0];
+  const svgContainer = svgXml.getElementsByTagName("svg")[0]
 
   if (!svgPath) return;
 
@@ -37,7 +38,8 @@ export function convertSvgToComponent(
   import { Icon } from '@chakra-ui/react';
 
   const ${componentName} = (props) => (
-    <Icon viewBox={'0 0 48 48'} {...props}>
+    <Icon viewBox={'${svgContainer.getAttribute("viewBox")}'} {...props}>
+        <title>${componentName}</title>
         <path
           fill={props.color}
           d='${svgPath.getAttribute("d")}'
